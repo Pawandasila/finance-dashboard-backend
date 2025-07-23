@@ -124,6 +124,10 @@ out/
 *.js.map
 *.d.ts
 
+# But keep custom declaration files
+!src/**/*.d.ts
+!@types/**/*.d.ts
+
 # But keep config files
 !*.config.js
 !jest.config.js
