@@ -67,8 +67,32 @@ app.use(`${BASE_PATH}/analytics` , passportAuthenticateJwt ,analyticsRoutes);
 
 app.use(ErrorHandler);
 
-app.listen(Env.PORT, async () => {
-  await DatabaseConnect();
-  await initializeCrons();
-  console.log(`Server is running on port ${Env.PORT} in ${Env.NODE_ENV} mode`);
-});
+// Initialize database connection
+const initializeApp = async () => {
+  try {
+    await DatabaseConnect();
+    console.log(`Database connected in ${Env.NODE_ENV} mode`);
+    
+    // Only initialize crons in development or when explicitly enabled
+    if (Env.NODE_ENV !== 'production') {
+      await initializeCrons();
+      console.log('Cron jobs initialized');
+    }
+  } catch (error) {
+    console.error('Failed to initialize app:', error);
+  }
+};
+
+// For Vercel (serverless), initialize on import
+if (process.env.VERCEL) {
+  initializeApp();
+} else {
+  // For local development
+  app.listen(Env.PORT, async () => {
+    await initializeApp();
+    console.log(`Server is running on port ${Env.PORT} in ${Env.NODE_ENV} mode`);
+  });
+}
+
+// Export for Vercel
+export default app;
