@@ -30,7 +30,12 @@ app.use(passport.initialize())
 
 app.use(
   cors({
-    origin: Env.FRONTEND_ORIGIN,
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:3000', 
+      'https://finance-dashboard-frontend-beta.vercel.app',
+      Env.FRONTEND_ORIGIN
+    ].filter(Boolean),
     credentials: true,
   })
 );
